@@ -1,3 +1,5 @@
+package DFS와BFS_1260;
+
 import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Queue;

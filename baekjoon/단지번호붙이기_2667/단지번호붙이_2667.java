@@ -1,10 +1,11 @@
+package 단지번호붙이기_2667;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class 단지번호붙이_2667 {
     static BufferedReader br;
