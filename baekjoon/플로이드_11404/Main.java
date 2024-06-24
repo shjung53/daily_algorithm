@@ -51,7 +51,7 @@ public class Main {
 
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
-                if (link[i][j] > INF) link[i][j] = 0;
+                if (link[i][j] >= INF) link[i][j] = 0;
                 stb.append(link[i][j]).append(' ');
             }
             stb.append('\n');
