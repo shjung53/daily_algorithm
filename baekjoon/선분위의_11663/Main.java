@@ -9,22 +9,24 @@ import java.util.StringTokenizer;
 public class Main {
     static BufferedReader br;
     static StringTokenizer st;
+    static StringBuilder stb;
     static int n, m;
     static int[] points;
 
     public static void main(String[] args) throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
         st = new StringTokenizer(br.readLine().trim());
+        stb = new StringBuilder();
         n = Integer.parseInt(st.nextToken());
         m = Integer.parseInt(st.nextToken());
         points = new int[n];
         st = new StringTokenizer(br.readLine().trim());
-        StringBuilder stb = new StringBuilder();
 
         for (int i = 0; i < n; i++) {
             points[i] = Integer.parseInt(st.nextToken());
         }
 
+        // 오름차순으로 정렬
         Arrays.sort(points);
 
         for (int i = 0; i < m; i++) {
@@ -33,6 +35,8 @@ public class Main {
             int end = Integer.parseInt(st.nextToken());
             int min = getMin(start);
             int max = getMax(end);
+
+            // 어떠한 점도 포함하지 않는 경우
             if (min >= n || max <= 0) {
                 stb.append(0).append('\n');
             } else {
