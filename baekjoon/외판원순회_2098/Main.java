@@ -3,19 +3,14 @@ package 외판원순회_2098;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.StringTokenizer;
-import java.io.*;
 
 public class Main {
-    static int n, maxVisited;
+    static int n, maxVisited, INF;
     static int[][] costMap;
     static int[][] dp;
     static BufferedReader br;
     static StringTokenizer st;
-    static int answer;
-    static ArrayList<String> visitedArr;
 
     /* 비트마스킹을 사용한다. 01000인 경우 2번째 도시면 방문한 것 2차원 배열이 너무 커지지 않도록 2진수로 관리할 것
     dp의 경우 [index][visited] 구조를 가진다.
@@ -25,13 +20,7 @@ public class Main {
         br = new BufferedReader(new InputStreamReader(System.in));
         n = Integer.parseInt(br.readLine());
         costMap = new int[n][n];
-        answer = Integer.MAX_VALUE;
-        visitedArr = new ArrayList<>();
-        StringBuilder stb = new StringBuilder();
-
-        for(int i=0; i<n; i++) {
-            stb.append('0');
-        }
+        INF = 99999999;
 
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine().trim());
@@ -39,70 +28,39 @@ public class Main {
                 costMap[i][j] = Integer.parseInt(st.nextToken());
             }
         }
+
         maxVisited = (int) Math.pow(2, n) - 1; // 2^n - 1을 하면 n이 3일 경우 7이되어 000부터 111까지 표현할 수 있다
         dp = new int[n][maxVisited + 1];
-
-        char[] arr = new char[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = '1';
-        }
-
-        for (int goal = 0; goal <= n; goal++) {
-            combination(0, 0, goal, arr);
-        }
-
-        for (int i = 0; i < n; i++) {
-            dp[i][0] = findDP(i, stb.toString(), i);
-        }
-
-        for (int i = 0; i < n; i++) {
-            answer = Math.min(answer, dp[i][0]);
-        }
-
-        System.out.println(answer);
-
+        System.out.println(findDP(0, 1)); // 순환 루트기 때문에 한 곳의 정점에서 구할 수 있다. 시작 정점 방문을 1로하고 시작
     }
 
-    static void combination(int index, int count, int goal, char[] arr) {
-        if (count == goal) {
-            visitedArr.add(String.valueOf(arr));
-            return;
-        }
-        if (index >= n) return;
-        combination(index + 1, count, goal, arr);
-        arr[index] = '0';
-        combination(index + 1, count + 1, goal, arr);
-        arr[index] = '1';
-    }
-
-    static int findDP(int i, String visited, int start) {
-        char[] visitedCharArr = visited.toCharArray();
-        int min = Integer.MAX_VALUE;
-        int visitedNumber = Integer.parseInt(visited, 2);
-        if (visitedNumber == maxVisited) return dp[i][visitedNumber] = 0;
-        if (dp[i][visitedNumber] > 0 && visited.charAt(start) != '0') return dp[i][visitedNumber];
-
-        for (int j = 0; j < n; j++) {
-            if (i == j) continue;
-            if (visitedCharArr[j] == '1') continue;
-            if (costMap[i][j] == 0) continue;
-            if (countZero(visited) > 1) {
-                if (j == start) continue;
-            }
-            visitedCharArr[j] = '1'; // 아직 안 가본 도시의 경우 갔다 생각하기
-            min = Math.min(min, findDP(j, String.valueOf(visitedCharArr), start) + costMap[i][j]); // 갔다고 생각한 후의 dp 값에 가는 경로 값 더해서 최소 구하기
-            visitedCharArr[j] = '0';
+    static int findDP(int now, int visited) {
+        // 도시를 다 방문했으면 시작 도시로 돌아오기
+        if(visited == maxVisited) {
+            // 돌아가는 길이 없으면 패스
+            if(costMap[now][0] == 0) return INF;
+            return costMap[now][0];
         }
 
-        return dp[i][visitedNumber] = min;
-    }
+        // 이미 계산이 되었으면 반환
+        if (dp[now][visited] != 0) return dp[now][visited];
 
-    static int countZero(String visited) {
-        int count = 0;
-        for (char c : visited.toCharArray()) {
-            if (c == '0') count++;
+        dp[now][visited] = INF;
+
+        for (int i = 0; i < n; i++) {
+            // 이동할 도시 확인하기
+            int visitCheck = 1 << i;
+
+            visitCheck = visitCheck & visited;
+
+            // 간적이 있는 도시 or 경로가 없는 경우는 패스
+            if (visitCheck != 0 || costMap[now][i] == 0) continue;
+
+            int nextVisited = visited | (1 << i);
+
+            dp[now][visited] = Math.min(dp[now][visited], findDP(i, nextVisited) + costMap[now][i]); // 다음 도시로 이동한 상태로 가장 짧은 남은거리를 받기
         }
 
-        return count;
+        return dp[now][visited];
     }
 }
