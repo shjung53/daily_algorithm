@@ -10,7 +10,7 @@ public class Main {
     static StringTokenizer st;
     static int t;
     static String noun;
-    static LinkedList<Integer> ascii;
+    static ArrayList<Integer> ascii;
 
     public static void main(String[] args) throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
@@ -19,7 +19,7 @@ public class Main {
 
         for (int i = 0; i < t; i++) {
             noun = br.readLine();
-            ascii = new LinkedList<>();
+            ascii = new ArrayList<>();
 
             for (int j = 0; j < noun.length(); j++) {
                 ascii.add(Character.codePointAt(noun, j));
