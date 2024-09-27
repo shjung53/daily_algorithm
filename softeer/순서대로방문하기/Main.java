@@ -64,7 +64,7 @@ public class Main {
             if(visited[newY][newX]) continue;
             if(map[newY][newX] == 1) continue;
             if(newY == route[nextIndex].y && newX == route[nextIndex].x) {
-                if(!checkRoute(newY, newX, nextIndex)) continue;
+                if(!checkRoute(nextIndex)) continue;
                 newIndex++;
             }
             visited[newY][newX] = true;
@@ -73,7 +73,7 @@ public class Main {
         }
     }
 
-    private static boolean checkRoute(int y, int x, int nextIndex) {
+    private static boolean checkRoute(int nextIndex) {
         for(int i=0; i<nextIndex; i++) {
             Position trace = route[i];
             if(!visited[trace.y][trace.x]) return false;
