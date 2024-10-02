@@ -1,7 +1,5 @@
 package lv2_큰수만들기;
 
-import java.util.*;
-
 class Solution {
     static int[] numbers;
     static int n, count;
@@ -20,12 +18,21 @@ class Solution {
 
         for(int i=0; i<n; i++) {
             int num = numbers[i];
-            if(k - count + i >= n) break;
             while(!deque.isEmpty() && num > deque.peekLast() && count < k) {
                 deque.removeLast();
                 count++;
             }
-            deque.addLast(num);
+            if(n - i >= k - count) {
+                deque.addLast(num);
+            }else {
+                count++;
+            }
+
+        }
+
+        while(count < k) {
+            deque.removeLast();
+            count++;
         }
 
         while(!deque.isEmpty()) {
