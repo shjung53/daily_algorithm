@@ -20,11 +20,7 @@ class Solution {
             stack.addLast(c);
         }
 
-        if(stack.isEmpty()) {
-            answer = 1;
-        } else {
-            answer = 0;
-        }
+        if(stack.isEmpty()) answer = 1;
 
         return answer;
     }
