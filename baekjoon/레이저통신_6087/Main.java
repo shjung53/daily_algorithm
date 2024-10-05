@@ -11,7 +11,7 @@ public class Main {
     static int[] dy = {0, 1, 0, -1};
     static int[] dx = {1, 0, -1, 0};
     static int[][] map;
-    static int[][] visited;
+    static int[][][] visited;
     static int w, h, startY, startX, endY, endX, answer;
 
     public static void main(String[] args) throws IOException {
@@ -20,7 +20,7 @@ public class Main {
         w = Integer.parseInt(st.nextToken());
         h = Integer.parseInt(st.nextToken());
         map = new int[h][w];
-        visited = new int[h][w];
+        visited = new int[h][w][4];
         answer = Integer.MAX_VALUE;
         startY = -1;
         startX = -1;
@@ -33,56 +33,55 @@ public class Main {
                 if (c == '*') map[i][j] = 1;
                 if (c == 'C') {
                     map[i][j] = 2;
-                    if(startY >= 0 && startX >= 0) {
+                    if (startY >= 0 && startX >= 0) {
                         endY = i;
                         endX = j;
-                        visited[i][j] = Integer.MAX_VALUE;
-                        continue;
+                    } else {
+                        startY = i;
+                        startX = j;
                     }
-                    startY = i;
-                    startX = j;
                 }
-                visited[i][j] = Integer.MAX_VALUE;
+                Arrays.fill(visited[i][j], Integer.MAX_VALUE);
             }
         }
 
         findRoute();
 
-        System.out.println(visited[endY][endX]);
+        System.out.println(answer);
     }
 
     private static void findRoute() {
         PriorityQueue<Position> pq = new PriorityQueue<>();
 
-        visited[startY][startX] = 0;
+        Arrays.fill(visited[startY][startX], 0);
         pq.offer(new Position(startY, startX, -1, 0));
 
-        while(!pq.isEmpty()) {
+        while (!pq.isEmpty()) {
             Position now = pq.poll();
 
-            if(visited[now.y][now.x] < now.count) continue;
-
-            if(now.y == endY && now.x == endX) return;
+            if (now.y == endY && now.x == endX) {
+                if (answer > visited[now.y][now.x][now.d]) answer = visited[now.y][now.x][now.d];
+                continue;
+            }
 
             for (int d = 0; d < 4; d++) {
                 int nextY = now.y + dy[d];
                 int nextX = now.x + dx[d];
                 if (nextY < 0 || nextX < 0 || nextY >= h || nextX >= w) continue;
-                if(map[nextY][nextX] == 1) continue;
+                if (map[nextY][nextX] == 1) continue;
 
-                if(now.d < 0) {
-                    visited[nextY][nextX] = now.count;
+                if (now.d < 0) {
                     pq.offer(new Position(nextY, nextX, d, now.count));
                     continue;
                 }
 
-                if(now.d != d) {
-                    if(visited[nextY][nextX] < now.count + 1) continue;
-                    visited[nextY][nextX] = now.count + 1;
+                if (now.d != d) {
+                    if (visited[nextY][nextX][d] <= now.count + 1) continue;
+                    visited[nextY][nextX][d] = now.count + 1;
                     pq.offer(new Position(nextY, nextX, d, now.count + 1));
-                }else {
-                    if(visited[nextY][nextX] < now.count) continue;
-                    visited[nextY][nextX] = now.count;
+                } else {
+                    if (visited[nextY][nextX][d] <= now.count) continue;
+                    visited[nextY][nextX][d] = now.count;
                     pq.offer(new Position(nextY, nextX, d, now.count));
                 }
 
