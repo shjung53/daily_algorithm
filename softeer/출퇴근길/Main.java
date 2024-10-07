@@ -11,10 +11,7 @@ public class Main {
     static StringTokenizer st;
     static int n, m, s, t, answer;
     static Node[] nodes;
-    static boolean[] visited;
-
-    static HashSet<Integer> sSet;
-    static HashSet<Integer> tSet;
+    static boolean[] visited, toT, toTR, toS, toSR;
 
     public static void main(String[] args) throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
@@ -23,8 +20,10 @@ public class Main {
         m = Integer.parseInt(st.nextToken());
         nodes = new Node[n + 1];
         visited = new boolean[n + 1];
-        sSet = new HashSet<>();
-        tSet = new HashSet<>();
+        toT = new boolean[n + 1];
+        toTR = new boolean[n + 1];
+        toS = new boolean[n + 1];
+        toSR = new boolean[n + 1];
         answer = 0;
 
         for (int i = 1; i <= n; i++) {
@@ -35,62 +34,65 @@ public class Main {
             st = new StringTokenizer(br.readLine().trim());
             int from = Integer.parseInt(st.nextToken());
             int to = Integer.parseInt(st.nextToken());
-            nodes[from].link.add(to);
+            nodes[from].out.add(to);
+            nodes[to].in.add(from);
         }
 
         st = new StringTokenizer(br.readLine());
         s = Integer.parseInt(st.nextToken());
         t = Integer.parseInt(st.nextToken());
 
+        visited[s] = true;
+        dfs(s, t);
+        visited = new boolean[n + 1];
+        visited[t] = true;
+        dfsR(t, t);
+
+        visited = new boolean[n + 1];
         visited[t] = true;
         dfs(t, s);
+        visited = new boolean[n + 1];
         visited[s] = true;
-        visited = new boolean[n];
-        dfs(s, t);
+        dfsR(s, s);
 
-        for (int sNode : sSet) {
-            for (int tNode : tSet) {
-                if (sNode == tNode) answer++;
-            }
+        for (int i = 1; i <= n; i++) {
+            if (i == s || i == t) continue;
+            if (toSR[i] && toTR[i] && toT[i] && toS[i]) answer++;
         }
 
         System.out.println(answer);
     }
 
     private static void dfs(int position, int goal) {
-        if (position == goal) {
-            for (int i = 0; i < n; i++) {
-                if(i == t || i == s) continue;
-                if (visited[i]) {
-                    for (int node : nodes[i].link) {
-                        if(node == t || node == s) continue;
-                        if (nodes[node].link.contains(i)) {
-                            if (goal == t) tSet.add(node);
-                            if (goal == s) sSet.add(node);
-                        }
-                    }
-                    if (goal == t) tSet.add(i);
-                    if (goal == s) sSet.add(i);
-                }
-            }
-            return;
-        }
-
-        for (int next : nodes[position].link) {
+        if (position == goal) return;
+        for (int next : nodes[position].out) {
             if (visited[next]) continue;
             visited[next] = true;
+            if (goal == s) toS[next] = true;
+            if (goal == t) toT[next] = true;
             dfs(next, goal);
-            visited[next] = false;
+        }
+    }
+
+    private static void dfsR(int position, int from) {
+        for (int before : nodes[position].in) {
+            if (visited[before]) continue;
+            if (from == s) toSR[before] = true;
+            if (from == t) toTR[before] = true;
+            visited[before] = true;
+            dfsR(before, from);
         }
     }
 }
 
 class Node {
     int num;
-    HashSet<Integer> link;
+    HashSet<Integer> out;
+    HashSet<Integer> in;
 
     public Node(int num) {
         this.num = num;
-        link = new HashSet<>();
+        out = new HashSet<>();
+        in = new HashSet<>();
     }
 }
