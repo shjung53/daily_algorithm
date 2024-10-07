@@ -23,14 +23,14 @@ public class Main {
         visited = new boolean[n][n];
         answer = 0;
 
-        for(int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
-            for(int j=0; j<n; j++) {
+            for (int j = 0; j < n; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        for(int i=0; i<m; i++) {
+        for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
             int y = Integer.parseInt(st.nextToken()) - 1;
             int x = Integer.parseInt(st.nextToken()) - 1;
@@ -45,45 +45,49 @@ public class Main {
     }
 
     private static void dfs(int y, int x, int nextIndex) {
-        if(y == route[m - 1].y && x == route[m - 1].x) {
+        if (nextIndex == m) {
             boolean success = true;
-            for(Position pos: route) {
-                if(!visited[pos.y][pos.x]) {success = false; break;}
+            for (Position pos : route) {
+                if (!visited[pos.y][pos.x]) {
+                    success = false;
+                    break;
+                }
             }
-            if(success) {
+            if (success) {
                 answer++;
             }
             return;
         }
-        for(int d = 0; d<4; d++) {
-            int newY = y + dy[d];
-            int newX = x + dx[d];
+        for (int d = 0; d < 4; d++) {
+            int nextY = y + dy[d];
+            int nextX = x + dx[d];
             int newIndex = nextIndex;
 
-            if(newY < 0 || newY >= n || newX < 0 || newX >= n) continue;
-            if(visited[newY][newX]) continue;
-            if(map[newY][newX] == 1) continue;
-            if(newY == route[nextIndex].y && newX == route[nextIndex].x) {
-                if(!checkRoute(nextIndex)) continue;
+            if (nextY < 0 || nextY >= n || nextX < 0 || nextX >= n) continue;
+            if (visited[nextY][nextX]) continue;
+            if (map[nextY][nextX] == 1) continue;
+            if (nextY == route[nextIndex].y && nextX == route[nextIndex].x) {
+                if (!checkRoute(nextIndex)) continue;
                 newIndex++;
             }
-            visited[newY][newX] = true;
-            dfs(newY, newX, newIndex);
-            visited[newY][newX] = false;
+            visited[nextY][nextX] = true;
+            dfs(nextY, nextX, newIndex);
+            visited[nextY][nextX] = false;
         }
     }
 
     private static boolean checkRoute(int nextIndex) {
-        for(int i=0; i<nextIndex; i++) {
+        for (int i = 0; i < nextIndex; i++) {
             Position trace = route[i];
-            if(!visited[trace.y][trace.x]) return false;
+            if (!visited[trace.y][trace.x]) return false;
         }
         return true;
     }
 }
 
-class Position{
+class Position {
     int y, x;
+
     public Position(int y, int x) {
         this.y = y;
         this.x = x;
