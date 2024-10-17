@@ -3,54 +3,53 @@ package 비슷한단어_2179;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Main {
     static BufferedReader br;
-    static int n, max, before;
-    static Word answerS, answerT;
-    static Word[] words;
+    static int n, max;
+    static String s, t;
+
+    static HashSet<String> set;
+    static ArrayList<String> words;
 
     public static void main(String[] args) throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
         n = Integer.parseInt(br.readLine().trim());
-        words = new Word[n];
-        max = 0;
-        answerS = new Word(99999, "");
-        answerT = new Word(99999, "");
-        PriorityQueue<Word> pq = new PriorityQueue<>(new Comparator<Word>() {
-            @Override
-            public int compare(Word o1, Word o2) {
-                return o1.str.compareTo(o2.str);
-            }
-        });
+        set = new HashSet<>();
+        words = new ArrayList<>();
+        s = "";
+        t = "";
+        max = -1;
 
         for (int i = 0; i < n; i++) {
-            pq.offer(new Word(i, br.readLine().trim()));
+            String word = br.readLine().trim();
+            if (!set.contains(word)) words.add(word);
         }
 
-        int index = 0;
-
-        while (!pq.isEmpty()) {
-            words[index] = pq.poll();
-            index++;
+        for (int i = 0; i < words.size() - 1; i++) {
+            for (int j = i + 1; j < words.size(); j++) {
+                String word1 = words.get(i);
+                String word2 = words.get(j);
+                int length = Math.min(word1.length(), word2.length());
+                int prefixCount = 0;
+                for (int l = 0; l < length; l++) {
+                    if (word1.charAt(l) == word2.charAt(l)) {
+                        prefixCount++;
+                    } else {
+                        break;
+                    }
+                }
+                if (prefixCount > max) {
+                    max = prefixCount;
+                    s = word1;
+                    t = word2;
+                }
+            }
         }
 
-
-        //            Word now = pq.poll();
-//            if (before.num > n) {
-//                before = now;
-//                continue;
-//            }
-//
-//            if(before.str.equals(now.str)) continue;
-//
-//            int prefixCount = countPrefix(before.str, now.str);
-
-        System.out.println(answerS.str);
-        System.out.println(answerT.str);
-
+        System.out.println(s);
+        System.out.println(t);
     }
 
     private static int countPrefix(String w1, String w2) {
@@ -66,15 +65,5 @@ public class Main {
         }
 
         return count;
-    }
-}
-
-class Word {
-    int num;
-    String str;
-
-    public Word(int num, String str) {
-        this.num = num;
-        this.str = str;
     }
 }
