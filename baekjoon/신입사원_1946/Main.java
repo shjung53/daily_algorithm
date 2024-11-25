@@ -1,9 +1,9 @@
 package 신입사원_1946;
 
+import com.sun.source.tree.Tree;
+
 import java.io.*;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static BufferedReader br;
@@ -15,16 +15,18 @@ public class Main {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));
         t = Integer.parseInt(br.readLine().trim());
+
         for (int tc = 1; tc <= t; tc++) {
             n = Integer.parseInt(br.readLine().trim());
             PriorityQueue<Student> pq = new PriorityQueue<>(new Comparator<Student>() {
                 @Override
                 public int compare(Student o1, Student o2) {
-                    return o1.aRank - o2.bRank;
+                    return o1.aRank - o2.aRank;
                 }
             });
 
-            int lastB = n + 1;
+            TreeSet<Integer> treeSet = new TreeSet<>();
+
             int count = 0;
 
             for (int i = 0; i < n; i++) {
@@ -36,8 +38,14 @@ public class Main {
 
             while (!pq.isEmpty()) {
                 Student student = pq.poll();
-                if (student.bRank < lastB) {
-                    lastB = student.bRank;
+                if (treeSet.isEmpty()) {
+                    treeSet.add(student.bRank);
+                    count++;
+                    continue;
+                }
+
+                if (treeSet.lower(student.bRank) == null) {
+                    treeSet.add(student.bRank);
                     count++;
                 }
             }
